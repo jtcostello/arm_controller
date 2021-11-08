@@ -47,6 +47,3 @@ void EMGStreamer::streamData(uint8_t* pData, size_t length_in) {
     }
   }
 }
-
-
-

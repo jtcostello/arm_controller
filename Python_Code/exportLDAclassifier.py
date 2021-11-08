@@ -79,6 +79,7 @@ model = LDA()
 model.fit(X_train, y_train)
 scores = cross_val_score(model, allbindataX, np.ravel(allbindataY), cv=10)
 print(f'cross validation average = {np.mean(scores)}')
+model.predict(X_test)
 
 
 # Export Weights (copied to clipboard)

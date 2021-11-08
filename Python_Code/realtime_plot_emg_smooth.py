@@ -27,7 +27,7 @@ from threading import Lock, Thread
 import myo
 import numpy as np
 
-sdk_path = 'C:/Users/Joey/Dropbox (University of Michigan)/EECS 473/Project/myo-sdk-win-0.9.0'
+sdk_path = 'C:/Users/Joey/Dropbox (University of Michigan)/EECS 473/Project/github/arm_controller/Python_Code/myo-sdk-win-0.9.0'
 
 
 def moving_average(x, N):
@@ -36,7 +36,7 @@ def moving_average(x, N):
 def filt_emg(data_in):
     # data_in is a list with each entry (timestamp, emglist(8))
     emg_data = np.array([x[1] for x in data_in]).T # 1000x8
-    data_filt = np.array([moving_average(x, 1) for x in emg_data])
+    data_filt = np.array([moving_average(x, 10) for x in emg_data])
     return data_filt
 
 
@@ -84,7 +84,7 @@ class Plot(object):
     self.listener = listener
     self.fig = plt.figure()
     self.axes = [self.fig.add_subplot('81' + str(i)) for i in range(1, 9)]
-    [(ax.set_ylim([-100, 100])) for ax in self.axes]
+    [(ax.set_ylim([-80, 80])) for ax in self.axes]
     self.graphs = [ax.plot(np.arange(self.n), np.zeros(self.n))[0] for ax in self.axes]
     plt.ion()
 

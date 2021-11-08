@@ -10,7 +10,6 @@ OnlineLDA::OnlineLDA(const float (&weightsin)[NUM_ELECTRODES][NUM_CLASSES], cons
      outmat{0}, yhat{0}, weights(weightsin), intercepts(interceptsin) {}
 
 
-
 int OnlineLDA::predict(float bindata[NUM_ELECTRODES]) {
   // (num_bins x 8) * (8 x num_classes) = (num_bins x num_classes)
 
@@ -32,17 +31,31 @@ int OnlineLDA::predict(float bindata[NUM_ELECTRODES]) {
     }
   }
 
-  // yhat = argmax(outmat, dim=rows)
-  for (int i = 0; i < r1; i++) {
-    float maxval = outmat[i][0];
-    yhat[i] = 0;
-    for (int j = 0; j < c2; j++) {
-      if (outmat[i][j] > maxval) {
-        maxval = outmat[i][j];
-        yhat[i] = j;
+
+  if (NUM_CLASSES == 1) {
+    
+    // special binary decision case:
+    return (outmat[0][0]>0) ? int(1) : int(0);  
+    
+  } else {
+    
+    // multiclass decision:
+    // yhat = argmax(outmat, dim=rows)
+    for (int i = 0; i < r1; i++) {
+      float maxval = outmat[i][0];
+      yhat[i] = 0;
+      for (int j = 0; j < c2; j++) {
+        if (outmat[i][j] > maxval) {
+          maxval = outmat[i][j];
+          yhat[i] = j;
+        }
       }
     }
+    return yhat[0];
+    
   }
+
+  
 
   //  //-----------------------------
   //  // DEBUG: print outmat
@@ -54,9 +67,6 @@ int OnlineLDA::predict(float bindata[NUM_ELECTRODES]) {
   //  }
   //  //------------------------------
 
-  return yhat[0];
+  
 
 }
-
-
-

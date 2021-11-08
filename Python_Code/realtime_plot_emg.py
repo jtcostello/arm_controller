@@ -29,6 +29,7 @@ import numpy as np
 
 sdk_path = 'C:/Users/Joey/Dropbox (University of Michigan)/EECS 473/Project/myo-sdk-win-0.9.0'
 
+lip_path = '/Users/jcostello/Dropbox (University of Michigan)/EECS 473/Project/myo-sdk-mac-0.9.0/myo.framework/Versions/A/myo'
 
 
 
@@ -101,7 +102,8 @@ class Plot(object):
 
 
 def main():
-  myo.init(sdk_path=sdk_path)
+  # myo.init(sdk_path=sdk_path)
+  myo.init(lib_name=lip_path)
   hub = myo.Hub()
   listener = EmgCollector(1000)
   with hub.run_in_background(listener.on_event):

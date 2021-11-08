@@ -7,7 +7,9 @@
 
 
 class OnlineLDA {
+  
     public:
+    
         OnlineLDA(const float (&weightsin)[NUM_ELECTRODES][NUM_CLASSES], const float (&interceptsin)[NUM_CLASSES]);
         int predict(float bindata[NUM_ELECTRODES]);
 
@@ -31,10 +33,3 @@ class OnlineLDA {
 
 
 #endif
-
-
-
-
-
-
-

@@ -4,8 +4,7 @@ import pickle
 import myo
 import time
 
-sdk_path = 'C:/Users/Joey/Dropbox (University of Michigan)/EECS 473/Project/myo-sdk-win-0.9.0'
-
+sdk_path = 'C:/Users/Joey/Dropbox (University of Michigan)/EECS 473/Project/github/arm_controller/Python_Code/myo-sdk-win-0.9.0'
 
 class EmgRecorder(myo.DeviceListener):
     """
@@ -47,7 +46,7 @@ def record_training_data(recorder, num_repeats=1, save_fname='emgdata.pkl'):
     Helper function to loop through all the grasps and record EMG
     """
     finger_groups = ['pinch', 'MRP']
-    postures = [[0, 'open', 'open'], [1, 'close', 'open'], [2, 'close', 'close'], [3, 'open', 'close']]
+    postures = [[0, 'neutral', 'neutral'], [1, 'open', 'open'], [2, 'close', 'open'], [3, 'close', 'close'], [4, 'open', 'close']]
     all_data = []
 
     # loop over postures and record data when user is ready
@@ -77,6 +76,6 @@ def record_training_data(recorder, num_repeats=1, save_fname='emgdata.pkl'):
 if __name__ == "__main__":
     myo.init(sdk_path=sdk_path)
     hub = myo.Hub()
-    recorder = EmgRecorder(num_samps=200*3)
+    recorder = EmgRecorder(num_samps=200*4)
     with hub.run_in_background(recorder.on_event):
-        record_training_data(recorder, num_repeats=5, save_fname='emgdata06.pkl')
+        record_training_data(recorder, num_repeats=4, save_fname='emgdata08.pkl')
