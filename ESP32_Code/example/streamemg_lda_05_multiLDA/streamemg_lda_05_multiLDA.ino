@@ -15,8 +15,11 @@
 
 
 // function prototypes
+void emgCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic, uint8_t* pData, size_t length, bool isNotify);
+void setupMyo();
 int parseGestures(uint8_t* gestures);
 uint8_t makeSerialPredictions();
+uint8_t makeMyoPredictions();
 
 // globals
 uint8_t output;
@@ -69,7 +72,12 @@ uint8_t gesture_map[] = {
   
 };
 
-// Class
+// class objects
+armband myo;
+EMGStreamer emgstreamer = EMGStreamer();
+OnlineLDA lda_isNeutral   = OnlineLDA(weights_neutral, intercepts_neutral);
+OnlineLDA lda_pinch       = OnlineLDA(weights_pinch, intercepts_pinch);
+OnlineLDA lda_mrp         = OnlineLDA(weights_mrp, intercepts_mrp);
 BLEClass Test;
 
 void setup() 
@@ -82,18 +90,28 @@ void setup()
 
 void loop() 
 {
-  if(Test.comboKeyboard.isConnected()) 
+  if (!myo.connected) 
+    setupMyo();
+  else
   {
-    serialGestureSequence(buff);
-    Serial.print("Outputted Buffer: ");
-    Serial.print(buff[0]);
-    Serial.print(buff[1]);
-    Serial.println(buff[2]);
-    output = parse_gestures(buff);
-    Serial.print("Outputted Bluetooth Keypress: ");
-    Serial.println((char)output);
-    Test.comboKeyboard.write((char)output);
+    emgstreamer.binUpData();
+    output =  makeMyoPredictions();
+    Serial.println(output);
+    delay(100);
+    emgstreamer.resetCount();
   }
+  // if(Test.comboKeyboard.isConnected()) 
+  // {
+  //   serialGestureSequence(buff);
+  //   Serial.print("Outputted Buffer: ");
+  //   Serial.print(buff[0]);
+  //   Serial.print(buff[1]);
+  //   Serial.println(buff[2]);
+  //   output = parse_gestures(buff);
+  //   Serial.print("Outputted Bluetooth Keypress: ");
+  //   Serial.println((char)output);
+  //   Test.comboKeyboard.write((char)output);
+  // }
 } // end main loop
 
 uint8_t makeSerialPredictions()
@@ -110,7 +128,30 @@ uint8_t makeSerialPredictions()
     return v;
 }
 
-
+uint8_t makeMyoPredictions()
+{
+  uint8_t handpos;
+  uint8_t neutral = lda_isNeutral.predict(emgstreamer.bindata);
+  if (neutral) 
+  {
+    handpos = 0;
+  } 
+  else 
+  {
+    uint8_t pinch = lda_pinch.predict(emgstreamer.bindata);
+    uint8_t mrp = lda_mrp.predict(emgstreamer.bindata);
+    if (pinch) 
+    {
+      handpos = mrp ? 3 : 2;
+    } 
+    else 
+    {
+      handpos = mrp ? 4 : 1;
+    }
+  }
+  // graphicalPrintClassifier(handpos);
+  return handpos;
+}
 void serialGestureSequence(uint8_t *buff)
 {
   // Reset variables
@@ -146,4 +187,22 @@ int parse_gestures(uint8_t* gestures)
 {
   uint8_t gesture_hash = (gestures[2] << 4) + (gestures[1] << 2) + gestures[0];
   return gesture_map[gesture_hash];
+}
+
+void setupMyo() {
+  Serial.println ("Trying to connect...");
+  myo.connect();
+  Serial.println (" - Connected");
+  delay(100);
+  myo.set_myo_mode(myohw_emg_mode_send_emg,               // EMG mode: myohw_emg_mode_send_emg OR myohw_emg_mode_send_emg_raw
+                   myohw_imu_mode_none,                   // IMU mode
+                   myohw_classifier_mode_disabled);
+  myo.emg_notification(TURN_ON)->registerForNotify(emgCallback); // setup the callback function
+  myo.set_sleep_mode(myohw_sleep_mode_never_sleep); //**THIS HAS TO GO LAST**
+}
+
+
+
+void emgCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic, uint8_t* pData, size_t length, bool isNotify) {
+  emgstreamer.streamData(pData, length);
 }
