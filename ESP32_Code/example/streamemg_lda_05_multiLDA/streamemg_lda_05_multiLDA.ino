@@ -20,6 +20,8 @@ void setupMyo();
 int parseGestures(uint8_t* gestures);
 uint8_t makeSerialPredictions();
 uint8_t makeMyoPredictions();
+void serialGestureSequence(uint8_t *buff);
+void bluetoothGestureSequence(uint8_t *buff);
 
 // globals
 uint8_t output;
@@ -84,34 +86,29 @@ void setup()
 {
   Serial.begin(115200);
   byte status = Test.init();
-  while(status != 0)
-    Serial.println("Cant connect to MPU");
+  //while(status != 0)
+    //Serial.println("Cant connect to MPU");
 }
 
 void loop() 
 {
   if (!myo.connected) 
     setupMyo();
-  else
+  elseL
   {
-    emgstreamer.binUpData();
-    output =  makeMyoPredictions();
-    Serial.println(output);
-    delay(100);
-    emgstreamer.resetCount();
+    if(Test.comboKeyboard.isConnected()) 
+    {
+      bluetoothGestureSequence(buff);
+      Serial.print("Outputted Buffer: ");
+      Serial.print(buff[0]);
+      Serial.print(buff[1]);
+      Serial.println(buff[2]);
+      output = parse_gestures(buff);
+      Serial.print("Outputted Bluetooth Keypress: ");
+      Serial.println((char)output);
+      Test.comboKeyboard.write((char)output);
+    }
   }
-  // if(Test.comboKeyboard.isConnected()) 
-  // {
-  //   serialGestureSequence(buff);
-  //   Serial.print("Outputted Buffer: ");
-  //   Serial.print(buff[0]);
-  //   Serial.print(buff[1]);
-  //   Serial.println(buff[2]);
-  //   output = parse_gestures(buff);
-  //   Serial.print("Outputted Bluetooth Keypress: ");
-  //   Serial.println((char)output);
-  //   Test.comboKeyboard.write((char)output);
-  // }
 } // end main loop
 
 uint8_t makeSerialPredictions()
@@ -130,6 +127,7 @@ uint8_t makeSerialPredictions()
 
 uint8_t makeMyoPredictions()
 {
+  emgstreamer.binUpData();
   uint8_t handpos;
   uint8_t neutral = lda_isNeutral.predict(emgstreamer.bindata);
   if (neutral) 
@@ -149,9 +147,10 @@ uint8_t makeMyoPredictions()
       handpos = mrp ? 4 : 1;
     }
   }
-  // graphicalPrintClassifier(handpos);
+  emgstreamer.resetCount();
   return handpos;
 }
+
 void serialGestureSequence(uint8_t *buff)
 {
   // Reset variables
@@ -193,7 +192,7 @@ void setupMyo() {
   Serial.println ("Trying to connect...");
   myo.connect();
   Serial.println (" - Connected");
-  delay(100);
+  delay(1000);
   myo.set_myo_mode(myohw_emg_mode_send_emg,               // EMG mode: myohw_emg_mode_send_emg OR myohw_emg_mode_send_emg_raw
                    myohw_imu_mode_none,                   // IMU mode
                    myohw_classifier_mode_disabled);
@@ -201,8 +200,43 @@ void setupMyo() {
   myo.set_sleep_mode(myohw_sleep_mode_never_sleep); //**THIS HAS TO GO LAST**
 }
 
-
-
 void emgCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic, uint8_t* pData, size_t length, bool isNotify) {
   emgstreamer.streamData(pData, length);
+}
+
+void bluetoothGestureSequence(uint8_t *buff)
+{
+  // Reset variables
+  uint8_t last_prediction = 0;
+  uint8_t lock;
+  uint8_t gest = 0;
+  memset(buff,0,(4*sizeof(*buff)));
+
+  while (last_prediction != 4 && gest <= 2)
+  {
+    Serial.println("Prepare Gesture");
+    delay(1000);
+    // Gather "arm" data
+    last_prediction = makeMyoPredictions();
+    lock = last_prediction;
+
+    delay(500);
+    Serial.println("Set hand to IDLE");
+    
+    // Record "arm" data if is not the character or sequence delimiters
+    if((last_prediction != 4) && (last_prediction != 0))
+    {
+      Serial.print("Gesture Received: ");
+      Serial.println(last_prediction);
+      buff[gest] = last_prediction;
+      ++gest;
+    }
+    // Wait until "arm" returns to neutral position
+    while(lock != 0)
+    {
+      Serial.println("Locked");
+      lock = makeMyoPredictions();
+    }
+    Serial.println("Unlocked");
+  }
 }
