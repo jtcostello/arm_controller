@@ -1,8 +1,5 @@
 /*
-  J Costello
-  Streams EMG from Myo and predicts hand grasp using LDA. Graphically prints classifier output to serial.
-  LDA weights should by trained and copied from python.
-  This version uses the EMGStreamer and OnlineLDA classes.
+  Gather's data from the serial bus and parses it into an output code.
 */
 
 // includes
@@ -25,46 +22,47 @@ uint8_t buff[3] = {0,0,0};
 // 2 -> gesture #2
 // 3 -> gesture #3
 // 4 -> sen
-char gesture_map[] = {
-  0x41,     // 1,0,0, A
-  0x20,     // 2,0,0, SPACE
-  0x7F,     // 3,0,0, BACKSPACE
-  0x00,     // 1,1,0
-  0x00,     // 1,2,0
-  0x00,     // 1,3,0
-  0x00,     // 2,1,0
-  0x00,     // 2,2,0
-  0x00,     // 2,3,0
-  0x00,     // 3,1,0
-  0x00,     // 3,2,0
-  0x00,     // 3,3,0
-  0x00,     // 1,1,1
-  0x00,     // 1,1,2
-  0x00,     // 1,1,3
-  0x00,     // 1,2,1
-  0x00,     // 1,2,2
-  0x00,     // 1,2,3
-  0x00,     // 1,3,1
-  0x00,     // 1,3,2
-  0x00,     // 1,3,3
-  0x00,     // 2,1,1
-  0x00,     // 2,1,2
-  0x00,     // 2,1,3
-  0x00,     // 2,2,1
-  0x00,     // 2,2,2
-  0x00,     // 2,2,3
-  0x00,     // 2,3,1
-  0x00,     // 2,3,2
-  0x00,     // 2,3,3
-  0x00,     // 3,1,1
-  0x00,     // 3,1,2
-  0x00,     // 3,1,3
-  0x00,     // 3,2,1
-  0x00,     // 3,2,2
-  0x00,     // 3,2,3
-  0x00,     // 3,3,1
-  0x00,     // 3,3,2
-  0x00      // 3,3,3
+uint8_t gesture_map[] = {
+  0x41,     // 0,0,0, A
+  0x20,     // 1,0,0, SPACE
+  0x7F,     // 2,0,0, BACKSPACE
+  0x42,     // 3,0,0, B
+  0x00,     // 0,1,0
+  0x43,     // 1,1,0
+  0x44,     // 2,1,0
+  0x45,     // 3,1,0
+  0x00,     // 0,2,0
+  0x46,     // 1,2,0
+  0x47,     // 2,2,0
+  0x48,     // 3,2,0
+  0x00,     // 0,3,0
+  0x49,     // 1,3,0
+  0x4A,     // 2,3,0
+  0x4B,     // 3,3,0
+  0x00,     // 0,0,1
+  0x00,     // 1,0,1
+  0x00,     // 2,0,1
+  0x00,     // 3,0,1
+  0x00,     // 0,1,1
+  0x4C,     // 1,1,1
+  0x4D,     // 2,1,1
+  0x4E,     // 3,1,1
+  0x00,     // 0,2,1
+  0x4F,     // 1,2,1
+  0x50,     // 2,2,1
+  0x51,     // 3,2,1
+  0x00,     // 0,3,1
+  0x52,     // 1,3,1
+  0x53,     // 2,3,1
+  0x54,     // 3,3,1
+  0x00,     // 0,0,2
+  0x00,     // 1,0,2
+  0x00,     // 2,0,2
+  0x00,     // 3,0,2
+  0x00,     // 0,1,2
+  0x55,     // 1,1,2
+  0x56      // 2,1,2
+  
 };
 
 
@@ -82,7 +80,7 @@ void loop()
   Serial.println(buff[2]);
   output = parse_gestures(buff);
   Serial.print("Outputted parsed Gesture: ");
-  Serial.println(output,HEX);
+  Serial.println((char)output);
 } // end main loop
 
 uint8_t makeSerialPredictions()
@@ -131,22 +129,8 @@ void serialGestureSequence(uint8_t *buff)
   }
 }
 
-// assumes each gesture takes the value 0-3
-// otherwise this function will break
-// gestures[0] is assumed to be the first gesture in the sequence
-// value 0 is assumed to be the idle gesture
-// gestures[0] cannot be 0
-// gestures[1] cannot be 0 if gestures[2] != 0, but can be 0 if gestures[2] == 0
-// gestures[2] can be 0
 int parse_gestures(uint8_t* gestures)
 {
-//  assert(gestures[0] != 0);
-//  assert(gestures[1] != 0 || gestures[2] == 0);
-  // bit field, {gestures[0], gestures[1], gestures[2]} -> 6 bit number
-  uint8_t gesture_hash = (gestures[0] << 4) + (gestures[1] << 2) + gestures[2];
-
-  // reads from a gesture_map, which has values from index 0 - 38
-  // it is assumed that gesture_hash cannot be greater than 38 due to assumptions above
-  return gesture_hash;
-//  return (int)gesture_map[gesture_hash];
+  uint8_t gesture_hash = (gestures[2] << 4) + (gestures[1] << 2) + gestures[0];
+  return gesture_map[gesture_hash];
 }
