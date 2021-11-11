@@ -1,3 +1,6 @@
+
+
+
 /*
   Gather's data from the serial bus and parses it into an output code.
 */
@@ -8,6 +11,7 @@
 #include "EMGStreamer.h"
 #include "OnlineLDA.h"
 #include <stdio.h>
+#include <EECS473BLECombo.h>
 
 
 // function prototypes
@@ -65,22 +69,31 @@ uint8_t gesture_map[] = {
   
 };
 
+// Class
+BLEClass Test;
 
 void setup() 
 {
   Serial.begin(115200);
+  byte status = Test.init();
+  while(status != 0)
+    Serial.println("Cant connect to MPU");
 }
 
 void loop() 
 {
-  serialGestureSequence(buff);
-  Serial.print("Outputted Buffer: ");
-  Serial.print(buff[0]);
-  Serial.print(buff[1]);
-  Serial.println(buff[2]);
-  output = parse_gestures(buff);
-  Serial.print("Outputted parsed Gesture: ");
-  Serial.println((char)output);
+  if(Test.comboKeyboard.isConnected()) 
+  {
+    serialGestureSequence(buff);
+    Serial.print("Outputted Buffer: ");
+    Serial.print(buff[0]);
+    Serial.print(buff[1]);
+    Serial.println(buff[2]);
+    output = parse_gestures(buff);
+    Serial.print("Outputted Bluetooth Keypress: ");
+    Serial.println((char)output);
+    Test.comboKeyboard.write((char)output);
+  }
 } // end main loop
 
 uint8_t makeSerialPredictions()
