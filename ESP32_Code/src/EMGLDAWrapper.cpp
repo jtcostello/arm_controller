@@ -1,6 +1,6 @@
-#include EMGLDAWrapper.h
+#include "EMGLDAWrapper.h"
 
-myoLDAComboClass::setupMyo()
+void myoLDAComboClass::setupMyo()
 {
     Serial.println ("Trying to connect...");
     myo.connect();
@@ -12,7 +12,7 @@ myoLDAComboClass::setupMyo()
     myo.emg_notification(TURN_ON)->registerForNotify(emgCallback); // setup the callback function
     myo.set_sleep_mode(myohw_sleep_mode_never_sleep); //**THIS HAS TO GO LAST**
 }
-myoLDAComboClass::makeMyoPredictions()
+uint8_t myoLDAComboClass::makeMyoPredictions()
 {
     emgstreamer.binUpData();
     uint8_t handpos;
@@ -37,12 +37,12 @@ myoLDAComboClass::makeMyoPredictions()
     emgstreamer.resetCount();
     return handpos;
 }
-myoLDAComboClass::parse_gestures(uint8_t* gestures)
+int myoLDAComboClass::parse_gestures(uint8_t* gestures)
 {
     uint8_t gesture_hash = (gestures[2] << 4) + (gestures[1] << 2) + gestures[0];
     return gesture_map[gesture_hash];
 }
-myoLDAComboClass::bluetoothGestureSequence(uint8_t *buff)
+void myoLDAComboClass::bluetoothGestureSequence(uint8_t *buff)
 {
     // Reset variables
     uint8_t last_prediction = 0;
@@ -70,7 +70,7 @@ myoLDAComboClass::bluetoothGestureSequence(uint8_t *buff)
     lockState(last_prediction);
     }
 }
-myoLDAComboClass::lockState(uint8_t current)
+void myoLDAComboClass::lockState(uint8_t current)
 {
     // Wait until "arm" returns to neutral position
     while(current != 0)
