@@ -118,7 +118,7 @@ void loop()
 {
   if (!myo.connected) 
     setupMyo();
-  elseL
+  else
   {
     if(Test.comboKeyboard.isConnected()) 
     {
