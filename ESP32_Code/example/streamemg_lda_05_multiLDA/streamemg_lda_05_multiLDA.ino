@@ -6,11 +6,7 @@
 */
 
 // includes
-#include <myo.h>
-#include "Constants.h"
-#include "EMGStreamer.h"
-#include "OnlineLDA.h"
-#include <stdio.h>
+#include <EMGLDAWrapper.h>
 
 // function prototypes
 void emgCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic, uint8_t* pData, size_t length, bool isNotify);
