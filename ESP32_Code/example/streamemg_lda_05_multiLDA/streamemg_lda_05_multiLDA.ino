@@ -11,8 +11,6 @@
 #include "EMGStreamer.h"
 #include "OnlineLDA.h"
 #include <stdio.h>
-#include <EECS473BLECombo.h>
-
 
 // function prototypes
 void emgCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic, uint8_t* pData, size_t length, bool isNotify);
@@ -22,7 +20,7 @@ uint8_t makeSerialPredictions();
 uint8_t makeMyoPredictions();
 void serialGestureSequence(uint8_t *buff);
 void bluetoothGestureSequence(uint8_t *buff);
-void lock(uint8_t current);
+void lockState(uint8_t current);
 
 // globals
 uint8_t output;
@@ -81,22 +79,22 @@ uint8_t gesture_map[] = {
   0x6D,     // 1,3,2 m
   0x0A,     // 2,3,2 Line Feed
   0x24,     // 3,3,2 $
-  0x00      // 0,0,3
-  0x00      // 1,0,3
-  0x00      // 2,0,3
-  0x00      // 3,0,3
-  0x00      // 0,1,3
+  0x00,     // 0,0,3
+  0x00,     // 1,0,3
+  0x00,     // 2,0,3
+  0x00,     // 3,0,3
+  0x00,     // 0,1,3
   0x66,     // 1,1,3 f
   0x76,     // 2,1,3 v
   0x2C,     // 3,1,3 ,
-  0x00      // 0,2,3
+  0x00,     // 0,2,3
   0x6A,     // 1,2,3 j
   0x79,     // 2,2,3 y
   0x3B,     // 3,2,3 ;
-  0x00      // 0,3,3
+  0x00,     // 0,3,3
   0x70,     // 1,3,3 p
   0x0D,     // 2,3,3 Carriage Return
-  0x27      // 3,3,3 '
+  0x27,     // 3,3,3 '
 };
 
 // class objects
@@ -105,14 +103,10 @@ EMGStreamer emgstreamer = EMGStreamer();
 OnlineLDA lda_isNeutral   = OnlineLDA(weights_neutral, intercepts_neutral);
 OnlineLDA lda_pinch       = OnlineLDA(weights_pinch, intercepts_pinch);
 OnlineLDA lda_mrp         = OnlineLDA(weights_mrp, intercepts_mrp);
-BLEClass Test;
 
 void setup() 
 {
   Serial.begin(115200);
-  byte status = Test.init();
-  //while(status != 0)
-    //Serial.println("Cant connect to MPU");
 }
 
 void loop() 
@@ -121,26 +115,25 @@ void loop()
     setupMyo();
   else
   {
-    if(Test.comboKeyboard.isConnected()) 
-    {
+      /*Gather Predictions*/
       bluetoothGestureSequence(buff);
+      /*Output Predictions*/
       Serial.print("Outputted Buffer: ");
       Serial.print(buff[0]);
       Serial.print(buff[1]);
       Serial.println(buff[2]);
+      /*Format and output predictions into new value*/
       output = parse_gestures(buff);
       Serial.print("Outputted Bluetooth Keypress: ");
       Serial.println((char)output);
-      Test.comboKeyboard.write((char)output);
-    }
   }
-} // end main loop
+} 
 
 uint8_t makeSerialPredictions()
 {
   uint8_t v;
   // Wait for a single byte to come in
-  Serial.println("Waiting for input");
+  // Serial.println("Waiting for input");
   while(!Serial.available());
   // Record integer version of input
   v = (Serial.read() - 48);
@@ -192,18 +185,18 @@ void serialGestureSequence(uint8_t *buff)
     // Record "arm" data if is not the character or sequence delimiters
     if((last_prediction != 4) && (last_prediction != 0))
     {
-      Serial.print("Gesture Received: ");
-      Serial.println(last_prediction);
+      // Serial.print("Gesture Received: ");
+      // Serial.println(last_prediction);
       buff[gest] = last_prediction;
       ++gest;
     }
     // Wait until "arm" returns to neutral position
     while(lock != 0)
     {
-      Serial.println("Locked");
+      // Serial.println("Locked");
       lock = makeSerialPredictions();
     }
-    Serial.println("Unlocked");
+    // Serial.println("Unlocked");
   }
 }
 
@@ -239,7 +232,7 @@ void bluetoothGestureSequence(uint8_t *buff)
 
   while (last_prediction != 4 && gest <= 2)
   {
-    Serial.println("Prepare Gesture");
+    // Serial.println("Prepare Gesture");
     delay(1000);
     // Gather "arm" data
     last_prediction = makeMyoPredictions();
@@ -247,24 +240,24 @@ void bluetoothGestureSequence(uint8_t *buff)
     // Record "arm" data if is not the character or sequence delimiters
     if((last_prediction != 4) && (last_prediction != 0))
     {
-      Serial.print("Gesture Received: ");
-      Serial.println(last_prediction);
+      // Serial.print("Gesture Received: ");
+      // Serial.println(last_prediction);
       buff[gest] = last_prediction;
       ++gest;
     }
     
-    Serial.println("Set hand to IDLE");
-    lock(last_prediction)
+    // Serial.println("Set hand to IDLE");
+    lockState(last_prediction);
   }
 }
 
-void lock(uint8_t current)
+void lockState(uint8_t current)
 {
     // Wait until "arm" returns to neutral position
     while(current != 0)
     {
-      Serial.println("Locked");
+      // Serial.println("Locked");
       current = makeMyoPredictions();
     }
-    Serial.println("Unlocked");
+    // Serial.println("Unlocked");
 }
