@@ -42,7 +42,3 @@ void loop()
   }
 } 
 
-void emgCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic, uint8_t* pData, size_t length, bool isNotify) 
-{
-  Test.emgstreamer.streamData(pData, length);
-}
