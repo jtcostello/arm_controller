@@ -3,8 +3,9 @@ from threading import Lock
 import pickle
 import myo
 import time
+from pathlib import Path
 
-sdk_path = 'C:/Users/Joey/Dropbox (University of Michigan)/EECS 473/Project/github/arm_controller/Python_Code/myo-sdk-win-0.9.0'
+sdk_path = Path(__file__).parent / 'myo-sdk-win-0.9.0'
 
 class EmgRecorder(myo.DeviceListener):
     """
