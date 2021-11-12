@@ -22,6 +22,7 @@ uint8_t makeSerialPredictions();
 uint8_t makeMyoPredictions();
 void serialGestureSequence(uint8_t *buff);
 void bluetoothGestureSequence(uint8_t *buff);
+void lock(uint8_t current);
 
 // globals
 uint8_t output;
@@ -242,10 +243,6 @@ void bluetoothGestureSequence(uint8_t *buff)
     delay(1000);
     // Gather "arm" data
     last_prediction = makeMyoPredictions();
-    lock = last_prediction;
-
-    delay(500);
-    Serial.println("Set hand to IDLE");
     
     // Record "arm" data if is not the character or sequence delimiters
     if((last_prediction != 4) && (last_prediction != 0))
@@ -255,12 +252,19 @@ void bluetoothGestureSequence(uint8_t *buff)
       buff[gest] = last_prediction;
       ++gest;
     }
+    
+    Serial.println("Set hand to IDLE");
+    lock(last_prediction)
+  }
+}
+
+void lock(uint8_t current)
+{
     // Wait until "arm" returns to neutral position
-    while(lock != 0)
+    while(current != 0)
     {
       Serial.println("Locked");
-      lock = makeMyoPredictions();
+      current = makeMyoPredictions();
     }
     Serial.println("Unlocked");
-  }
 }
