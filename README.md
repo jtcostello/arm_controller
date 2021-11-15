@@ -12,6 +12,8 @@ Using Arduino IDE and arduino.h for programming the ESP32 (https://github.com/es
 
 Install it by following instructions in the github link
 
+***WORK IN PROGRESS: DOWNLOADING MYO CONNECT SOFTWARE***
+
 # Installation Instructions
 As mentioned above, first follow each repo's respecive instructions for their proper installations. Then, download the files within the "src" folder. Lastly, put the files witnin the "src" folder into a .zip file and use the following link to install the library: (https://www.arduino.cc/en/guide/libraries#toc4)
 
