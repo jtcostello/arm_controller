@@ -90,6 +90,7 @@ class myoLDAComboClass
     }
     void setupMyo();
     uint8_t makeMyoPredictions();
+    uint8_t debounceMyoPredictions();
     int parse_gestures(uint8_t* gestures);
     void bluetoothGestureSequence(uint8_t *buff);
     void lockState(uint8_t current);

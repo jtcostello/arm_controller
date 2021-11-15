@@ -37,6 +37,24 @@ uint8_t myoLDAComboClass::makeMyoPredictions()
     emgstreamer.resetCount();
     return handpos;
 }
+uint8_t myoLDAComboClass::debounceMyoPredictions()
+{
+    uint8_t count = 0;
+    uint8_t read;
+    uint8_t constant = makeMyoPredictions();
+    while(count <= 5)
+    {
+        read = makeMyoPredictions();
+        if(read == constant)
+            count++;
+        else
+        {
+            constant = read;
+            count = 0;
+        }
+
+    }
+}
 int myoLDAComboClass::parse_gestures(uint8_t* gestures)
 {
     uint8_t gesture_hash = (gestures[2] << 4) + (gestures[1] << 2) + gestures[0];
@@ -55,7 +73,7 @@ void myoLDAComboClass::bluetoothGestureSequence(uint8_t *buff)
     // Serial.println("Prepare Gesture");
     delay(1000);
     // Gather "arm" data
-    last_prediction = makeMyoPredictions();
+    last_prediction = debounceMyoPredictions();
     
     // Record "arm" data if is not the character or sequence delimiters
     if((last_prediction != 4) && (last_prediction != 0))
@@ -76,7 +94,7 @@ void myoLDAComboClass::lockState(uint8_t current)
     while(current != 0)
     {
     // Serial.println("Locked");
-    current = makeMyoPredictions();
+    current = debounceMyoPredictions();
     }
     // Serial.println("Unlocked");
 }
