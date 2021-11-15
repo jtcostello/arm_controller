@@ -16,7 +16,7 @@ class myoLDAComboClass
     uint8_t gesture_map[65] = {
       0x20,     // 0,0,0 SPACE (This occurs if sequence Delimiter is the first gesture used)
       0x65,     // 1,0,0 e
-      0x7F,     // 2,0,0, BACKSPACE
+      0x08,     // 2,0,0, BACKSPACE
       0x61,     // 3,0,0 a
       0x00,     // 0,1,0
       0x72,     // 1,1,0 r
