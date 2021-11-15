@@ -52,7 +52,7 @@ uint8_t myoLDAComboClass::debounceMyoPredictions()
             constant = output;
             count = 0;
         }
-
+        delay(10);
     }
     return output;
 }
