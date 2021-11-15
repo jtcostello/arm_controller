@@ -8,4 +8,6 @@ Python Code Setup: WIP!!!
 
 Refer to the following forum post, in order to install constants.h: (https://forum.arduino.cc/t/can-i-include-a-header-file-that-is-not-a-library/37468)
 
-NOTE: Make sure that your version of the ESP32 Board is 1.0.6!!
+Using Arduino IDE and arduino.h for programming the ESP32 (https://github.com/espressif/arduino-esp32) (ver 1.0.6)
+
+Install it by following instructions in the github link
