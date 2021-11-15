@@ -67,6 +67,10 @@ void myoLDAComboClass::bluetoothGestureSequence(uint8_t *buff)
     uint8_t lock;
     uint8_t gest = 0;
     memset(buff,0,(4*sizeof(*buff)));
+    
+    //MEMORY BUG FIX for Space ' '
+    memset(buff,0,3);
+    lockState(last_prediction);
 
     while (last_prediction != 4 && gest <= 2)
     {
