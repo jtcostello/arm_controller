@@ -49,12 +49,17 @@ void myoLDAComboClass::bluetoothGestureSequence(uint8_t *buff)
     uint8_t lock;
     uint8_t gest = 0;
     memset(buff,0,(4*sizeof(*buff)));
+    
+    //MEMORY BUG FIX for Space ' '
+    memset(buff,0,3);
+    lockState(last_prediction);
 
     while (last_prediction != 4 && gest <= 2)
     {
     // Serial.println("Prepare Gesture");
     delay(1000);
     // Gather "arm" data
+    //Potential have a do while that checks to make sure not neutral
     last_prediction = makeMyoPredictions();
     
     // Record "arm" data if is not the character or sequence delimiters
