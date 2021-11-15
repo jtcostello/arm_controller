@@ -40,20 +40,21 @@ uint8_t myoLDAComboClass::makeMyoPredictions()
 uint8_t myoLDAComboClass::debounceMyoPredictions()
 {
     uint8_t count = 0;
-    uint8_t read;
+    uint8_t output;
     uint8_t constant = makeMyoPredictions();
-    while(count <= 5)
+    while(count <= 20)
     {
-        read = makeMyoPredictions();
-        if(read == constant)
+        output = makeMyoPredictions();
+        if(output == constant)
             count++;
         else
         {
-            constant = read;
+            constant = output;
             count = 0;
         }
 
     }
+    return output;
 }
 int myoLDAComboClass::parse_gestures(uint8_t* gestures)
 {
