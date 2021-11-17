@@ -24,6 +24,14 @@ As mentioned above, first follow each repo's respecive instructions for their pr
 Install python libaries using pip.
 
 # Utilizing the Example Code
-Regarding hardware, only a MYO armband(https://www.robotshop.com/en/myo-gesture-control-armband-black.html) and an ESP32-WROOM-32 Module (https://support.microsoft.com/en-us/windows/pair-a-bluetooth-device-in-windows-2be7b51f-6ae9-b757-a3b9-95ee40c3e242#WindowsVersion=Windows_10) are needed.
+Regarding hardware, only a [MYO armband](https://www.robotshop.com/en/myo-gesture-control-armband-black.html) and an ESP32 are needed.
 
-NEED TO TALK TO JOEY ABOUT THEY PYTHON ASPECT OF EXAMPLE CODE!!!!!
+### Python Visualization and Training
+1. Connect to the Myo using Myo Connect software
+2. (optional) Verify Bluetooth connection and visualize code by running `realtime_plot_emg_smooth.py`
+3. Use `recordtrainingdata.py` to record data. The program tells the user which grasp to perform, and records data. Set the output filename at the top.
+4. Use `exportLDAclassifier_multiLDA.py` to process data and train LDA classifier weights. The program outputs 3 sets of weights for the neutral, pinch, and MRP classifiers.
+
+### ESP32 Code
+
+
