@@ -1,8 +1,9 @@
 """
-pip install micro-learn
-pip install pyperclip
+pip install numpy
+pip install pandas
 pip install matplotlib
 pip install sklearn
+pip install pyperclip
 """
 import numpy as np
 import pandas as pd
@@ -21,8 +22,8 @@ import pyperclip
 
 
 # ------------ INPUT OPTIONS --------------
-data_fname = 'emgdata08.pkl'
-binwidth_samps = 100        # 20 = 100ms,   40 = 200ms,  100 = 500ms
+data_fname = 'emgdata08.pkl'                                                # what dataset to load (exported from 'recordtrainingdata.py')
+binwidth_samps = 100        # 20 = 100ms,   40 = 200ms,  100 = 500ms        # how many samples per classification bin
 classes = [0,1,2,3,4]
 class_labels = ['neutral', 'open', 'thumb pinch', 'fist', 'finger gun']
 # -----------------------------------------

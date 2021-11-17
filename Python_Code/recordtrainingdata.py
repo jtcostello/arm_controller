@@ -5,6 +5,13 @@ import myo
 import time
 from pathlib import Path
 
+
+out_fname = 'emgdata08.pkl'     # the filename of where to save the recorded data
+seconds_per_grasp = 4           # how many seconds of data to record per grasp
+num_repeats = 4                 # how many times to cycle through all grasps
+
+
+
 sdk_path = Path(__file__).parent / 'myo-sdk-win-0.9.0'
 
 class EmgRecorder(myo.DeviceListener):
@@ -77,6 +84,6 @@ def record_training_data(recorder, num_repeats=1, save_fname='emgdata.pkl'):
 if __name__ == "__main__":
     myo.init(sdk_path=sdk_path)
     hub = myo.Hub()
-    recorder = EmgRecorder(num_samps=200*4)
+    recorder = EmgRecorder(num_samps=200*seconds_per_grasp)
     with hub.run_in_background(recorder.on_event):
-        record_training_data(recorder, num_repeats=4, save_fname='emgdata08.pkl')
+        record_training_data(recorder, num_repeats=num_repeats, save_fname=out_fname)
