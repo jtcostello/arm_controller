@@ -33,5 +33,6 @@ Regarding hardware, only a [MYO armband](https://www.robotshop.com/en/myo-gestur
 4. Use `exportLDAclassifier_multiLDA.py` to process data and train LDA classifier weights. The program outputs 3 sets of weights for the neutral, pinch, and MRP classifiers.
 
 ### ESP32 Code
-
+5. Copy the weight matrices (from step 4) into `constants.h`
+6. Compile & run on ESP32. It will try to connect to the Myo over Bluetooth, and once connected will make grasp classifications and print to serial.
 
