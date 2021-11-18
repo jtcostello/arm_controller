@@ -35,7 +35,7 @@ class myoLDAComboClass
       0x00,     // 2,0,1
       0x00,     // 3,0,1
       0x00,     // 0,1,1
-      0x62,     // 1,1,1 b
+      0xB0,     // 1,1,1 Return
       0x71,     // 2,1,1 q
       0x21,     // 3,1,1 !
       0x00,     // 0,2,1
@@ -76,8 +76,8 @@ class myoLDAComboClass
       0x3B,     // 3,2,3 ;
       0x00,     // 0,3,3
       0x70,     // 1,3,3 p
-      0x0D,     // 2,3,3 Carriage Return
-      0x27      // 3,3,3 '
+      0x27,     // 2,3,3 '
+      0x62      // 3,3,3 b
     };
     armband myo;
     EMGStreamer emgstreamer;
