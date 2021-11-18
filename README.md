@@ -26,7 +26,7 @@ Install python libaries using pip.
 # Utilizing the Example Code
 Regarding hardware, only a [MYO armband](https://www.robotshop.com/en/myo-gesture-control-armband-black.html) and an ESP32 are needed.
 
-### Python Visualization and Training
+### Python Visualization, Data Collection, and ML Training
 1. Connect to the Myo using Myo Connect software
 2. (optional) Verify Bluetooth connection and visualize code by running `realtime_plot_emg_smooth.py`
 3. Use `recordtrainingdata.py` to record data. The program tells the user which grasp to perform, and records data. Set the output filename at the top.
