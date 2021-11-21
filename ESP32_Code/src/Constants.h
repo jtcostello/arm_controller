@@ -8,8 +8,16 @@
 #define NUM_EMG_HIST        25      // 5 = 100ms bins,  10 = 200ms bins,  25 = 500ms bins (should match python training)
 #define NUM_ELECTRODES      8       // number of EMG sensors
 #define NUM_BINS_PER_RUN    1       // how many bins are evaluated per each LDA run (usually 1)
-#define NUM_CLASSES         1       // how many different hand grasps
+#define NUM_CLASSES         5       // how many different hand grasps
 
+
+const String class_name_strings[NUM_CLASSES] = { 
+  "neutral", 
+  "pinch-OPEN   mrp-OPEN", 
+  "pinch-ClOSED mrp-OPEN",
+  "pinch-CLOSED mrp-CLOSED", 
+  "pinch-OPEN   mrp-CLOSED"
+};
 
 
 // ************************** LDA Weights, copied from python output *******************************************

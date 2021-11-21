@@ -11,14 +11,20 @@ class EMGStreamer {
         void resetCount();
         void binUpData();
         void streamData(uint8_t* pData, size_t length);
+        void pause();
+        void resume();
 
         float bindata[NUM_ELECTRODES];                          // stores binned data, used as input to LDA
         volatile int emgdata[NUM_EMG_HIST][NUM_ELECTRODES];     // stores recent EMG data (circular buffer)
 
         volatile int bufferpos;             // current zero-idx of the circular buffer (where we will overwrite next)
         volatile int samplecounter;
+        
         const int num_electrodes;
         const int num_emg_hist;
+
+   private:
+        volatile bool is_paused;
 };
 
 #endif
