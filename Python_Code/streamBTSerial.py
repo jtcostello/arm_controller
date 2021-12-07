@@ -44,7 +44,7 @@ def connectBTSerial():
     value = int(input())
     print(f'You chose port {ports[value]}')
 
-    # ser = serial.Serial(ports[value], 115200)
+    ser = serial.Serial(ports[value], 115200)
     ser.flushInput()
     return ser
 
@@ -55,8 +55,9 @@ def readSerial(ser):
     '''
     while True:
         ser_bytes = ser.readline()
-        decoded_bytes = float(ser_bytes[0:len(ser_bytes)-2].decode("utf-8")) # remove the last two bytes ('\n') and convert to float
-        print(decoded_bytes)
+        print(ser_bytes[0:len(ser_bytes)-2])
+        # decoded_bytes = float(ser_bytes[0:len(ser_bytes)-2].decode("utf-8")) # remove the last two bytes ('\n') and convert to float
+        # print(decoded_bytes)
 
 
 def readSerialEMG(ser):

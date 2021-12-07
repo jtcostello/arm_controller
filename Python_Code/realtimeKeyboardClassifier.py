@@ -62,29 +62,30 @@ def connectBTSerial():
 
 
 
-def readSerialEMG(ser):
-    '''
-    Reads in a received EMG sample containing data from 8 channels.
-    For each time sample, the ESP32 should first send the startID (9999), followed by the 8 samples. The startID and
-    each sample should be followed by a newline. (Serial.println(9999); Serial.println(electrode1); ...)
-    '''
+# def readSerialEMG(ser):
+#     '''
+#     Reads in a received EMG sample containing data from 8 channels.
+#     For each time sample, the ESP32 should first send the startID (9999), followed by the 8 samples. The startID and
+#     each sample should be followed by a newline. (Serial.println(9999); Serial.println(electrode1); ...)
+#     '''
 
-    while True:
-        # wait for the start identifier
-        startID_int = 9999
-        ser_bytes = ser.readline()
-        while (int(ser_bytes[0:len(ser_bytes) - 2].decode("utf-8")) != startID_int):
-            ser_bytes = ser.readline()
-            time.sleep(0.01)
+#     while True:
 
-        # now read in values
-        emgsample = []
-        for i in range(NUM_ELCTRODES):
-            ser_bytes = ser.readline()
-            emgsample[i] = int(ser_bytes[0:len(ser_bytes) - 2].decode("utf-8"))
+#         # wait for the start identifier
+#         startID_int = 9999
+#         ser_bytes = ser.readline()
+#         while (int(ser_bytes[0:len(ser_bytes) - 2].decode("utf-8")) != startID_int):
+#             ser_bytes = ser.readline()
+#             time.sleep(0.01)
 
-        # print values
-        print(emgsample)
+#         # now read in values
+#         emgsample = []
+#         for i in range(NUM_ELCTRODES):
+#             ser_bytes = ser.readline()
+#             emgsample[i] = int(ser_bytes[0:len(ser_bytes) - 2].decode("utf-8"))
+
+#         # print values
+#         print(emgsample)
 
 
 class EmgStreamer:
@@ -105,18 +106,14 @@ class EmgStreamer:
         samples = 0
         while samples < self.num_samps:
 
-            # wait for the start identifier
-            startID_int = 9999
-            ser_bytes = self.btserial.readline()
-            while (int(ser_bytes[0:len(ser_bytes)-2].decode("utf-8")) != startID_int):
-                ser_bytes = self.btserial.readline()
-                time.sleep(0.01)
-
             # now read in values
-            emgsample = []
+            emgsample = [0,0,0,0,0,0,0,0]
             for i in range(NUM_ELCTRODES):
                 ser_bytes = self.btserial.readline()
-                emgsample[i] = int(ser_bytes[0:len(ser_bytes)-2].decode("utf-8"))
+                try:
+                    emgsample[i] = int(ser_bytes[0:len(ser_bytes)-2].decode("utf-8"))
+                except:
+                    pass
 
             # append to buffer
             self.emg_data_queue.append(emgsample)

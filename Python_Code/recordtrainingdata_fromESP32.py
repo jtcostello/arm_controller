@@ -18,9 +18,9 @@ Recorded data is saved to file, as specified by the 'out_fname' variable.
 
 
 # ------ Recording parameters ----------
-out_fname = 'emgdata08.pkl'     # the filename of where to save the recorded data
-seconds_per_grasp = 4           # how many seconds of data to record per grasp
-num_repeats = 4                 # how many times to cycle through all grasps
+out_fname = 'emgdata11.pkl'     # the filename of where to save the recorded data
+seconds_per_grasp = 6           # how many seconds of data to record per grasp
+num_repeats = 3                 # how many times to cycle through all grasps
 show_gesture_image = False      # if we should show the gesture images (must be in same directory)
 
 finger_groups = ['pinch', 'MRP']
@@ -94,25 +94,43 @@ class EmgRecorder():
     def record_emg(self):
         # clear previous data
         self.emg_data_queue.clear()
+        self.btserial.flushInput()
+        self.btserial.flushOutput()
+        time.sleep(0.01)
+
+        # print('start')
+        # print(datetime.datetime.now())
 
         # wait for the queue to fill (read in serial data)
         while len(self.emg_data_queue) < self.num_samps:
 
             # wait for the start identifier
             startID_int = 9999
-            ser_bytes = self.btserial.readline()
-            while (int(ser_bytes[0:len(ser_bytes)-2].decode("utf-8")) != startID_int):
+            val = 0
+            while (val != startID_int):
                 ser_bytes = self.btserial.readline()
+                try:
+                    val = int(ser_bytes[0:len(ser_bytes)-2].decode("utf-8"))
+                except:
+                    pass
                 time.sleep(0.01)
 
             # now read in values
-            emgsample = []
+            emgsample = [0,0,0,0,0,0,0,0]
             for i in range(NUM_ELCTRODES):
                 ser_bytes = self.btserial.readline()
-                emgsample[i] = int(ser_bytes[0:len(ser_bytes)-2].decode("utf-8"))
+                try:
+                    emgsample[i] = int(ser_bytes[0:len(ser_bytes)-2].decode("utf-8"))
+                # print(emgsample[i])
+                except:
+                    pass
+
 
             self.emg_data_queue.append((datetime.datetime.now(), emgsample))
 
+        # print(len(self.emg_data_queue))
+        # print('end')
+        # print(datetime.datetime.now())
         return self.emg_data_queue
 
 
@@ -135,7 +153,10 @@ def record_training_data(recorder, num_repeats=1, save_fname='emgdata.pkl'):
                 time.sleep(0.1)
                 showGestureImage(posture[0], f'RECORDING')
             else:
-                input('Press enter when ready...')
+                print('get ready...')
+                time.sleep(2)
+                print('recording')
+                # input('Press enter when ready...')
             data = recorder.record_emg()
             all_data.append((posture[0], data.copy()))
             print('done')

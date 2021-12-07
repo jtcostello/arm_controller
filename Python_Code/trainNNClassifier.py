@@ -18,6 +18,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from keras.models import Sequential
 from keras.layers import Dense
 from sklearn.preprocessing import OneHotEncoder
+import tensorflow as tf
 
 
 '''
@@ -27,7 +28,7 @@ The network structure is defined in 'make_model()'.
 
 
 # ---------------------------- Parameters ---------------------------- 
-data_fname = 'emgdata08.pkl'                                                # what dataset to load (exported from 'recordtrainingdata.py')
+data_fname = 'emgdata11.pkl'                                                # what dataset to load (exported from 'recordtrainingdata.py')
 binwidth_samps = 25        # 5 = 100ms,   10 = 200ms,  25 = 500ms           # how many samples per classification bin
 classes = [0, 1, 2, 3, 4]
 class_labels = ['neutral', 'open', 'thumb pinch', 'fist', 'finger gun']     # (this is optional)
@@ -80,8 +81,8 @@ for classnum in classes:
 
     Y = classnum * np.ones((X.shape[0],1))
     bindata.append((X,Y))
-    allbindataX = np.vstack((allbindataX, X))
-    allbindataY = np.vstack((allbindataY, Y))
+    allbindataX = np.vstack((allbindataX, X)).astype('float32')
+    allbindataY = np.vstack((allbindataY, Y)).astype('float32')
 
 # Run PCA for visualization
 pca = decomposition.PCA(n_components=3)
@@ -96,7 +97,7 @@ ax.w_xaxis.set_ticklabels([])
 ax.w_yaxis.set_ticklabels([])
 ax.w_zaxis.set_ticklabels([])
 plt.title('PCA of EMG data')
-plt.show(block=False)
+plt.show(block=True)
 
 
 
@@ -121,7 +122,7 @@ def plot_confusion_matrix(y_test, y_pred):
     plt.xlabel('Predicted Class')
     plt.ylabel('True Class')
     plt.title('Confusion Matrix')
-    plt.show(block=False)
+    plt.show(block=True)
 
 
 # params
