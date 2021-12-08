@@ -19,7 +19,7 @@ Install 'myo' using 'pip install myo-python'
 Myo connect software is required for the python bluetooth connection (software is no longer actively supported): https://myo-connect.software.informer.com/download/
 
 # Installation Instructions
-As mentioned above, first follow each repo's respecive instructions for their proper installations. Then, download the files within the "src" folder. Lastly, put the files witnin the "src" folder into a .zip file and use the following link to install the library: (https://www.arduino.cc/en/guide/libraries#toc4)
+As mentioned above, first follow each repo's respecive instructions for their proper installations. Then, download the files within the "src" folder. Lastly, put the files witnin the "src" folder into a .zip file and use the following link to install the library: (https://www.arduino.cc/en/guide/libraries#toc4). When using this repo, use the src file from Tag2 for the most up to date code.
 
 Install python libaries using pip.
 
